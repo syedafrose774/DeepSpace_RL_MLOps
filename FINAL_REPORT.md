@@ -1,42 +1,47 @@
 # Final Project Report: Deep Space Probe Communication Scheduling
 
-## 1. Project Overview
-The "Deep Space Probe Communication Scheduling using Deep Q-Networks (DQN) and MLOps" project has been successfully completed. An autonomous reinforcement learning agent (DQN) was trained to optimize deep-space probe communication schedules, improving energy conservation, extending mission lifetimes, and efficiently managing data storage compared to a fixed-rule baseline scheduler. MLOps practices, including tracking (MLflow), automated logging, model versioning, and an inference API, have been fully integrated.
+## 1. Problem Statement
+Deep-space probes operate in highly resource-constrained environments. They must manage limited battery power, varying communication signal strength, and random communication windows with Earth, all while trying to transmit scientifically valuable data. Traditional rule-based programming drains battery quickly because it blindly tries to send data whenever a window is open, ignoring long-term survival. This project solves this by using Deep Reinforcement Learning (DQN) to act as an intelligent scheduling agent.
 
-## 2. Implementation Summary
-All specified components were developed and connected seamlessly:
+## 2. SDG Impact
+This project directly supports **SDG 9 (Industry, Innovation and Infrastructure)** by improving the intelligence and efficiency of space technology infrastructure. Furthermore, it aligns with **SDG 12 (Responsible Consumption and Production)** by optimizing the consumption of the probe's critical resources (battery energy and storage capacity), significantly reducing waste.
 
-* **Environment Simulator (`env/probe_env.py`)**: A continuous dynamic Gym environment simulating battery levels, data queues, varying signal strengths, and communication windows.
-* **DQN Agent & Architecture (`models/`, `agents/`)**: Implemented a PyTorch-based neural network and an epsilon-greedy DQN agent with experience replay and a target network.
-* **Training Pipeline (`training/train.py`)**: A reproducible training script equipped with `MLflow` for tracking hyperparameter configurations, metrics (reward, loss, success rates, battery remaining), and automatic model versioning.
-* **Evaluation & Plots (`evaluation/evaluate.py`)**: An automated script to pit the trained DQN agent against a simple rule-based Baseline Scheduler, coupled with `matplotlib` logic to generate requested insights (rewards, battery usage, storage, etc.).
-* **FastAPI Service (`api/api.py`)**: A production-ready API to query real-time scheduling recommendations dynamically using the latest trained model.
+## 3. Simulator (Environment)
+The environment `env/probe_env.py` is a custom OpenAI Gym simulator. 
+* **State Space:** 7 variables including battery level, signal strength, storage usage, high/low priority data queues, communication window availability, and system health.
+* **Action Space:** 4 actions (Transmit high-priority, Transmit low-priority, Conserve power, Enter low-power mode).
+* **Dynamics:** Every timestep drains battery passively. Random cosmic events generate new data packets.
+* **Rewards:** Positive rewards for successful transmissions and power conservation. Large penalties for storage overflow (-12), transmission failure (-6), and battery depletion (-25).
 
-## 3. Evaluation Results
-The final evaluation over 50 episodes yielded the following performance comparison:
+## 4. Reinforcement Learning (RL) Methodology
+We chose the **Deep Q-Network (DQN)** algorithm because the state variables (like battery percentage and signal strength) are continuous, making standard Q-tables impossible. 
+* **Exploration:** We use an $\epsilon$-greedy strategy, decaying from 1.0 to 0.05.
+* **Architecture:** A PyTorch neural network with 2 hidden layers (128 and 64 neurons) mapping the 7-dimensional state to 4 Q-values.
+* **Training:** The model is trained over 500 episodes using an Experience Replay buffer and a Target Network to stabilize learning.
 
-| Metric | Baseline | DQN | Improvement Analysis |
-|--------|----------|-----|----------------------|
-| **Average Reward** | 119.0 | **357.3** | The DQN agent achieves ~3x more overall reward. |
-| **Battery Remaining** | -0.54% | **59.18%** | Baseline aggressively drains battery and fails quickly. DQN learns to intelligently conserve power. |
-| **Episode Lengths** | 27.3 | **73.0** | DQN survives almost 3x longer before episode termination constraints. |
+## 5. MLOps Implementation
+The project follows strict MLOps principles:
+* **Experiment Tracking & Registry:** We use `MLflow` to track hyperparameters (learning rate, epsilon), log episode metrics (reward, loss, battery remaining), and version our trained models (`dqn_policy_final.pth`).
+* **CI/CD & Automation:** We implemented a GitHub Actions workflow (`.github/workflows/ci.yml`) to automatically test the pipeline on code pushes.
+* **Containerization:** The inference API is containerized using `Dockerfile` and `docker-compose.yml` for scalable deployment.
+* **Deployment API:** A FastAPI server (`api/api.py`) exposes the trained model via a `/schedule` REST endpoint.
+* **Monitoring:** A logging script (`monitor.py`) checks for operational constraints and logs warnings if the battery drifts below thresholds or if excessive transmission failures occur.
 
-### Insights
-* **Baseline Scheduler**: Blindly attempts to transmit whenever a communication window is open. This drains the battery rapidly regardless of poor signal strength or the value of the packets, resulting in premature failure.
-* **DQN Agent**: Successfully learned the intricate balance between required transmissions and the critical need to preserve battery and health. Its lower "Success Rate" statistic is actually a product of intelligent selective transmission—it avoids wasting energy on poor communication windows, thereby sustaining battery life incredibly well.
+## 6. Results and Analysis
+The final evaluation over 50 episodes yielded the following performance comparison against a Baseline fixed-rule scheduler:
 
-## 4. Improvements Made
-In completing the project, the following improvements and refinements were added beyond the core requirements:
-1. **Plots Directory Fix**: Handled dynamic plotting output directories directly in the evaluation logic to prevent crashing on uninitialized environments.
-2. **Missing Dependencies Addressed**: Updated dependencies to ensure tools like `tabulate` were available for generating robust evaluation reports.
-3. **Run Scripts**: Added a `start_server.bat` execution script to quickly spin up the FastAPI service in deployment.
-4. **Enhanced Evaluation Error Handling**: Robust model loading logic that falls back securely if models are missing, rather than crashing hard.
+| Metric | Baseline | RL Policy (DQN) |
+|--------|----------|-----------------|
+| **Average Reward** | 119.0 | **357.3** |
+| **Average Battery Remaining** | -0.54% | **59.18%** |
+| **Episode Length (Survival)** | 27.3 steps | **73.0 steps** |
 
-## 5. Quick Start for Deployment
-Start the inference server by double-clicking `start_server.bat` or running:
-```bash
-python api/api.py
-```
-Check health with a `GET /status` call and request schedules using `POST /schedule`.
+### Insights: When does RL perform better?
+The RL policy vastly outperforms the Baseline when resources are low. While the Baseline attempts to blindly transmit data just because a communication window is open—leading to massive transmission failures if the signal is weak—the RL agent learns to skip weak signals and **conserve power**, allowing it to survive almost 3x longer and harvest significantly more overall reward.
 
-*Project completely aligned with SDG 9 (Industry, Innovation and Infrastructure) and SDG 12 (Responsible Consumption and Production).*
+### When does it behave unexpectedly?
+The RL agent sometimes achieves a very low "transmission success rate" compared to what humans might expect. This isn't a failure; it's a learned survival tactic. It avoids transmitting unless conditions are absolutely perfect, which looks like "inactivity" but is actually hyper-optimized resource preservation.
+
+## 7. Limitations and Future Work
+* **Sensitivity to Traffic Patterns:** If the random generation rate of high-priority packets drastically increases beyond the training distribution, the RL agent's strict conservation policies might lead to storage overflows because it is too conservative to clear the queue in time.
+* **Future Work:** Implementing a Proximal Policy Optimization (PPO) algorithm could provide more stable continuous control, and live drift-detection tools (like EvidentlyAI) could be added to the FastAPI service to monitor state-distribution shifts in real-time.
