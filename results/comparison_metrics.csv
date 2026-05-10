@@ -1,3 +1,0 @@
-,rewards,success_rates,battery_remaining,storage_overflows,episode_lengths
-Baseline,135.38,0.3008822187444478,-0.506426917797683,0.0,28.02
-DQN,369.02,0.04,60.82929488574564,1.0,76.14
