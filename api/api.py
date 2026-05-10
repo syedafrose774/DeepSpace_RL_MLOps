@@ -2,6 +2,8 @@ import os
 import sys
 import yaml
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import numpy as np
 
@@ -10,6 +12,16 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from agents.dqn_agent import DQNAgent
 
 app = FastAPI(title="Deep Space Probe Scheduling API")
+
+# Enable CORS for frontend requests
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 class ProbeState(BaseModel):
     battery_level: float
@@ -80,6 +92,9 @@ def schedule(state: ProbeState):
         "recommended_action": recommended_action
     }
 
+# Mount the frontend static files at the root
+app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run("api.api:app", host="0.0.0.0", port=8000, reload=True)
