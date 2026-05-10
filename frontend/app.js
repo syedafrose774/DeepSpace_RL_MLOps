@@ -66,18 +66,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 let cssClass = "action-text ";
                 
                 if (action === "transmit_high_priority") {
-                    displayTxt = "🚀 TRANSMIT HIGH PRIORITY";
+                    displayTxt = "TRANSMIT HIGH PRIORITY";
                     cssClass += "transmit";
                 } else if (action === "transmit_low_priority") {
-                    displayTxt = "📡 TRANSMIT LOW PRIORITY";
+                    displayTxt = "TRANSMIT LOW PRIORITY";
                     cssClass += "transmit";
                 } else if (action === "conserve_power") {
-                    displayTxt = "🔋 CONSERVE POWER";
+                    displayTxt = "CONSERVE POWER";
                     cssClass += "conserve";
                 } else if (action === "enter_low_power_mode") {
-                    displayTxt = "💤 ENTER LOW POWER MODE";
+                    displayTxt = "ENTER LOW POWER MODE";
                     cssClass += "sleep";
                 } else {
+
                     displayTxt = "UNKNOWN ACTION";
                 }
 

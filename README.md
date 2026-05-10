@@ -19,6 +19,7 @@ graph TD;
     F --> G[FastAPI Service]
     G -->|POST /schedule| H[Client/Dashboard]
     I[GitHub Actions CI/CD] -->|Auto-Tests| G
+
 ```
 
 ## 3. Reproducibility & Run Instructions

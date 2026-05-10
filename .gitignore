@@ -2,7 +2,6 @@ __pycache__/
 *.pyc
 mlruns/
 mlflow.db
-experiments/
-plots/
-results/
 .env
+.antigravity/
+.gemini/
