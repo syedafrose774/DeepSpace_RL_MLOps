@@ -105,6 +105,12 @@ def schedule(state: ProbeState):
 # Mount the frontend static files at the root
 app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
 
+print("Mission Control Links:")
+print(f"API Docs: http://localhost:8000/docs")
+print(f"MLflow UI: http://localhost:5000")
+print(f"Dashboard: http://localhost:8000/")
+print("")
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
