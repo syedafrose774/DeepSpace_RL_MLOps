@@ -6,7 +6,7 @@
 **Department:** Machine Learning / Artificial Intelligence
 **Team Members:** [YOUR NAME] ([YOUR USN]), [FRIEND NAME] ([FRIEND USN])
 
----
+
 
 ## 1. ABSTRACT
 The exploration of deep space relies on unmanned, autonomous space probes that gather critical scientific telemetry. These spacecraft operate in extreme, resource-constrained environments where communication with Earth is restricted by narrow orbital windows, unpredictable signal degradation due to cosmic radiation, and strictly limited onboard battery capacities. Traditional communication scheduling architectures rely on static, heuristic-based algorithms (such as First-In-First-Out queuing or fixed-priority scheduling). While computationally simple, these rigid methodologies fail to adapt to stochastic environmental changes, often resulting in catastrophic battery depletion when attempting to force data transmissions through weak signals, or the loss of vital scientific data due to solid-state memory buffer overflows.
@@ -17,7 +17,7 @@ Furthermore, to bridge the gap between theoretical AI and production-ready aeros
 
 Empirical evaluations conducted over thousands of simulated cosmic scenarios demonstrate the profound efficacy of the proposed system. The DQN agent successfully converged on a sophisticated policy of "Strategic Patience"—actively choosing to conserve power during periods of weak signal strength rather than wasting energy. Compared to a standard rule-based baseline scheduler, the RL agent achieved a 285% increase in total mission reward, improved transmission accuracy by 17%, and extended the average operational survival time of the probe by over 310%. This project conclusively demonstrates that combining Deep Reinforcement Learning with a robust MLOps lifecycle provides a highly scalable, fault-tolerant solution for next-generation autonomous aerospace communications.
 
----
+
 
 ## 2. INTRODUCTION & PROBLEM STATEMENT
 The exploration of the solar system and beyond relies exclusively on autonomous, unmanned space probes. As sensor technology advances, modern spacecraft—such as the Mars Reconnaissance Orbiter or the James Webb Space Telescope—generate unprecedented volumes of high-resolution scientific data. However, the infrastructure required to transmit this data back to Earth has not scaled at the same pace. Deep space communication remains one of the most severe bottlenecks in aerospace engineering. Probes must rely on the Deep Space Network (DSN), meaning communication is only possible during narrow, strictly scheduled orbital windows.
@@ -30,7 +30,7 @@ This project seeks to solve this complex resource allocation problem by framing 
 
 Finally, to ensure this theoretical AI model is viable for real-world production, the project implements a comprehensive Machine Learning Operations (MLOps) pipeline. The system encompasses automated experiment tracking via MLflow, CI/CD testing pipelines, Docker containerization, and deployment as a highly available FastAPI microservice. By integrating state-of-the-art AI with rigorous software engineering practices, this project presents a complete, end-to-end framework for next-generation autonomous spacecraft communication.
 
----
+
 
 ## 3. THEORETICAL BACKGROUND
 
@@ -45,7 +45,7 @@ Reinforcement Learning (RL) involves an agent interacting with an environment ov
 ### 3.2 Deep Q-Networks (DQN)
 Standard Q-Learning utilizes a table to store the value of every state-action pair. However, because our state space contains continuous variables (e.g., battery percentage ranging from 0.0 to 100.0), the state space is technically infinite. To solve this, we employ a Deep Q-Network (DQN), which uses a multi-layer perceptron (Deep Neural Network) as a function approximator to estimate the optimal action-value function $Q^*(s, a)$.
 
----
+
 
 ## 4. SYSTEM ARCHITECTURE & MDP FORMULATION
 
@@ -75,7 +75,7 @@ The reward function $R_t$ is carefully shaped to align with mission objectives:
 - **Terminal Penalty (Death):** $-25$ if the battery reaches $0\%$. The episode ends immediately.
 - **High Battery Bonus:** $+3$ standard survival reward for ending a turn with battery $> 50\%$.
 
----
+
 
 ## 5. EXPERIMENTAL METHODOLOGY
 
@@ -95,7 +95,7 @@ To stabilize the deep neural network training, two key RL techniques were used:
 2. **$\epsilon$-Greedy Exploration:** The agent begins with $\epsilon = 1.0$ (100% random actions to explore the environment). This decays by a factor of $0.995$ every episode until it reaches a minimum of $0.05$, at which point the agent is exploiting its learned knowledge 95% of the time.
 3. **Discount Factor ($\gamma$):** Set to $0.99$ to ensure the agent prioritizes long-term survival over immediate transmission rewards.
 
----
+
 
 ## 6. RESULTS AND ANALYSIS
 
@@ -115,7 +115,7 @@ By analyzing the action distribution, we observed a profound behavioral differen
 
 Conversely, the DQN agent learned an advanced survival tactic we call **"Strategic Patience."** Even when a communication window was open, if the signal strength was below a certain threshold (e.g., $< 0.5$) or the battery was below $20\%$, the AI would refuse to transmit. It actively chose the "Conserve Power" action, waiting for better cosmic weather. This refusal to waste energy is the primary reason the DQN agent survives 3.1 times longer than the baseline.
 
----
+
 
 ## 7. CONCLUSION
 This project successfully demonstrates that Deep Reinforcement Learning is a highly viable solution for autonomous resource management in aerospace engineering. The DQN agent far surpassed traditional fixed-logic programming by learning to dynamically balance the risk of storage overflow against the risk of battery depletion. By learning the hidden dynamics of the stochastic environment, the AI optimized deep-space communications, resulting in vastly extended mission lifespans.

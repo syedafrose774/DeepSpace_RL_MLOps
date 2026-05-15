@@ -135,7 +135,7 @@ def run_evaluation(config_path, model_path):
     comparison_df = pd.DataFrame([baseline_metrics, dqn_metrics], index=['Baseline', 'DQN'])
     comparison_df.to_csv('results/comparison_metrics.csv')
     
-    print("\n--- Final Comparison Table ---")
+    print("\nFinal Comparison Table")
     print(comparison_df.to_markdown())
     
     # 5. Baseline vs DQN Comparison Plot
