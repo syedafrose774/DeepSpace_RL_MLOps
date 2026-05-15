@@ -22,6 +22,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.on_event("startup")
+async def startup_event():
+    print("\n" + "="*50)
+    print("🚀 DEEP SPACE PROBE - MISSION CONTROL ACCESS CENTER")
+    print("="*50)
+    print(f"📡 API Documentation (Swagger): http://localhost:8000/docs")
+    print(f"📊 MLflow Experiment UI:       http://localhost:5000")
+    print(f"🎮 Simulation Dashboard:       http://localhost:8000/")
+    print("="*50 + "\n")
+
 
 class ProbeState(BaseModel):
     battery_level: float
